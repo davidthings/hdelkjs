@@ -1,4 +1,3 @@
-
 var hdelk = (function(){
 
     /**
@@ -65,7 +64,7 @@ var hdelk = (function(){
           })
 
         // create a dummy drawing just to get text sizes
-        var drawDummy = SVG(divname).size( 0, 0 ).group();
+        var drawDummy = SVG().addTo('#' + divname).size(0, 0);
 
         transformNode( drawDummy, graph );
 
@@ -161,7 +160,7 @@ var hdelk = (function(){
             //     if ( child.ports )
             //         child.height += ( child.ports.length - 1 ) * port_height;
             // if ( !child.width ) {
-            //     var tempText = drawDummy.text(child.label).style("font-size:"+node_port_name_font_size);
+            //     var tempText = drawDummy.text(child.label).font({ size: node_port_name_font_size });
             //     child.width = tempText.node.getComputedTextLength();
             //     if ( child.width == 0 )
             //        child.width = 6;
@@ -195,7 +194,7 @@ var hdelk = (function(){
                 else
                     fontSize = ( item.type ) ? node_type_font_size : node_name_font_size;
                 item.height = fontSize + node_label_height_padding;
-                var tempText = drawDummy.text(text).style("font-size:"+fontSize);
+                var tempText = drawDummy.text(text).font({ size: fontSize });
                 item.width = tempText.node.getComputedTextLength() + node_label_width_padding;
                 if ( item.width + 10 > calculatedNodeWidth )
                     calculatedNodeWidth = item.width + node_label_width_padding;
@@ -365,7 +364,7 @@ var hdelk = (function(){
                 item.layoutOptions[ 'elk.port.side' ] = 'SIDES_EAST_WEST'
 
             if ( !item.width ) {
-                var tempText = drawDummy.text(item.label).style("font-size:"+port_name_font_size);
+                var tempText = drawDummy.text(item.label).font({ size: port_name_font_size });
                 item.width = tempText.node.getComputedTextLength() + port_width_padding;
             }
             if ( !item.height )
@@ -444,7 +443,7 @@ var hdelk = (function(){
                             item = newItem;
                         }
                         if ( ( item.text || item.text == "" ) && !item.width && !item.height ) {
-                            var tempText = drawDummy.text(item.text).style("font-size:" + edge_label_text_size);
+                            var tempText = drawDummy.text(item.text).font({ size: edge_label_text_size });
                             item.width = tempText.node.getComputedTextLength() + edge_label_width_padding;
                             item.height = edge_label_text_size + edge_label_height_padding;
                         }
@@ -472,7 +471,7 @@ var hdelk = (function(){
         var diagramElement = document.getElementById(div_id);
         diagramElement.innerHTML = "";
 
-        var draw = SVG(div_id).size( diagram_layout.width, diagram_layout.height );
+        var draw = SVG().addTo('#' + div_id).size(diagram_layout.width, diagram_layout.height);
 
         node( draw, diagram_layout, 0, 0 );
     }
@@ -510,10 +509,10 @@ var hdelk = (function(){
                 if ( item.type ) {
                     var typeColor = ( child.highlight == 0 ) ? nameColor : node_type_text_color;
 
-                    nodeNameText = group.text(labelText).style("font-size:"+node_type_font_size).fill({color:typeColor});
+                    nodeNameText = group.text(labelText).font({ size: node_type_font_size }).fill({color:typeColor});
                 }
                 else
-                    nodeNameText = group.text(labelText).style("font-size:"+nameSize).fill({color:nameColor});
+                    nodeNameText = group.text(labelText).font({ size: nameSize }).fill({color:nameColor});
                 if ( child.port ) {
                     var nodeNameTextWidth = nodeNameText.node.getComputedTextLength();
                     nodeNameText.move(offsetX + child.x+item.x+(item.width-nodeNameTextWidth)/2, offsetY + child.y+item.y + node_label_height_padding/2);
@@ -566,7 +565,7 @@ var hdelk = (function(){
                 group.rect(item.width, item.height).move(offsetX + child.x+item.x,offsetY + child.y+item.y)
                                                    .attr({ fill:fillColor, 'stroke-width': strokeWidth, stroke:strokeColor })
                                                    .stroke({width:strokeWidth});
-                var portTextItem = group.text(portText).style("font-size:"+port_name_font_size).fill({color:nameColor});
+                var portTextItem = group.text(portText).font({ size: port_name_font_size }).fill({color:nameColor});
                 var portTextWidth = portTextItem.node.getComputedTextLength();
 
 
@@ -574,13 +573,13 @@ var hdelk = (function(){
                     //group.rect(item.width, item.height).move(offsetX + child.x+item.x,offsetY + child.y+item.y)
                     //                                   .attr({ fill:childColor, 'stroke-width': node_stroke_width, stroke:portColor })
                     //                                   .stroke({width:strokeWidth});
-                    //var portTextItem = group.text(portText).style("font-size:"+port_name_font_size).fill({color:nameColor});
+                    //var portTextItem = group.text(portText).font({ size: port_name_font_size }).fill({color:nameColor});
                     //var portTextWidth = portTextItem.node.getComputedTextLength();
                     portTextItem.transform( { rotation:90, cx:0, cy:0  } ).move( offsetY + child.y+item.y+(item.height-portTextWidth)/2, -(offsetX + child.x+item.x+item.width-(item.width-port_name_font_size)/2 + 2) );
                 }
                 else {
                     //group.rect( item.width, item.height ).attr({ fill:portColor }).move(offsetX + child.x+item.x, offsetY + child.y+item.y );
-                    //var portTextItem = group.text(portText).style("font-size:"+port_name_font_size).fill({color:port_text_color});
+                    //var portTextItem = group.text(portText).font({ size: port_name_font_size }).fill({color:port_text_color});
                     //var portTextWidth = portTextItem.node.getComputedTextLength();
                         // draw the background
                     portTextItem.move(offsetX + child.x+item.x+(item.width-portTextWidth)/2, offsetY + child.y+item.y + 2);
@@ -611,7 +610,7 @@ var hdelk = (function(){
 
         var width;
         var color;
-        if ( edge.highlight || edge.highlight == 0 ) {
+        if ( typeof edge.highlight !== 'undefined' ) {
             if ( edge.bus ) {
                 width = edge_bus_highlight_width;
                 color = edge_bus_highlight_color[ edge.highlight ];
@@ -622,10 +621,10 @@ var hdelk = (function(){
         } else {
             if ( edge.bus ) {
                 width = edge_bus_width;
-                color = edge_bus_color[ edge.highlight ];
+                color = edge_bus_color;
             } else {
                 width = edge_width;
-                color = edge_color[ edge.highlight ];
+                color = edge_color;
             }
         }
 
@@ -677,7 +676,7 @@ var hdelk = (function(){
                     edgeText = item.text;
                 else
                     edgeText = item.id;
-                var edgeTextItem = group.text(edgeText).style("font-size:"+edge_label_text_size).fill({color:label_color});
+                var edgeTextItem = group.text(edgeText).font({ size: edge_label_text_size }).fill({color:label_color});
                 var edgeTextWidth = edgeTextItem.node.getComputedTextLength();
                 edgeTextItem.move(offsetX + item.x+(item.width-edgeTextWidth)/2, offsetY + item.y + edge_label_height_padding/2);
 
